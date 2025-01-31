@@ -45,13 +45,13 @@ public class LineStatistic {
     }
 
     public void printStatistic(boolean briefStats, boolean fullStats) {
-        if (briefStats || fullStats) {
+        if (briefStats) {
             System.out.println("Statistics:");
             System.out.println("Integers: " + getIntCount());
             System.out.println("Floats: " + getFloatCount());
             System.out.println("Strings: " + getStringCount());
         }
-        if (fullStats && getFloatCount() > 0) {
+        if (fullStats) {
             System.out.println("Float statistics:");
             System.out.println("  Min: " + getFloatMin());
             System.out.println("  Max: " + getFloatMax());

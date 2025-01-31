@@ -20,7 +20,7 @@ public class Main {
                 parsingArguments.getFloatFileName(), parsingArguments.getStringFileName(),
                 parsingArguments.isAppendMode());
         LineStatistic stats = processor.writeToFiles(progArg);
-        stats.printStatistic(parsingArguments.isFullStat(), parsingArguments.isBriefStat());
+        stats.printStatistic(ParsingArgumentsImpl.isBriefStats(), ParsingArgumentsImpl.isFullStats());
     }
 }
 
