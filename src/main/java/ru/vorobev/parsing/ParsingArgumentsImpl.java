@@ -2,13 +2,12 @@ package ru.vorobev.parsing;
 
 import lombok.Getter;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class ParsingArgumentsImpl implements ParsingArguments{
+public class ParsingArgumentsImpl implements ParsingArguments {
     private static String intFileName = "integers.txt";
     private static String floatFileName = "floats.txt";
     private static String stringFileName = "strings.txt";
@@ -26,15 +25,11 @@ public class ParsingArgumentsImpl implements ParsingArguments{
     @Getter
     private static Path floatFullPathToFile;
     @Getter
-    private static Path floatPath;
-    @Getter
     private static Path stringFullPathToFile;
-    @Getter
-    private static Path stringPath;
     @Getter
     private static Path intFullPathToFile;
     @Getter
-    private static Path intPath;
+    private static Path path;
 
 
     static public List<String> programArgs(String[] args) {
@@ -68,11 +63,10 @@ public class ParsingArgumentsImpl implements ParsingArguments{
                         }
                         if (!outputPath.isEmpty()) {
                             intFullPathToFile = Path.of(DEFAULT_PATH + outputPath + "\\" + intFileName);
-                            intPath = Path.of(DEFAULT_PATH + outputPath);
                             floatFullPathToFile = Path.of(DEFAULT_PATH + outputPath + "\\" + floatFileName);
-                            floatPath = Path.of(DEFAULT_PATH + outputPath);
                             stringFullPathToFile = Path.of(DEFAULT_PATH + outputPath + "\\" + stringFileName);
-                            stringPath = Path.of(DEFAULT_PATH + outputPath);
+                            path = Path.of(DEFAULT_PATH + outputPath);
+
                         }
                     } else {
                         System.err.println("Error: Missing prefix after -p");

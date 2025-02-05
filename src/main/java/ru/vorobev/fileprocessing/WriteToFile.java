@@ -7,10 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-//TODO
 @NoArgsConstructor
 public class WriteToFile implements AutoCloseable {
-
 
     public void writeToFile(String value, Path path) {
         try {
@@ -19,24 +17,8 @@ public class WriteToFile implements AutoCloseable {
             System.err.println("Failed to write to the file " + e);
         }
     }
-
-//    public void writeInteger(String value) throws IOException {
-//        intWriter.write(value);
-//        intWriter.newLine();
-//    }
-
-//    public void writeFloat(String value) throws IOException {
-//        floatWriter.write(value);
-//        floatWriter.newLine();
-//    }
-//
-//    public void writeString(String value) throws IOException {
-//        stringWriter.write(value);
-//        stringWriter.newLine();
-//    }
-
     @Override
-    public void close() throws IOException {
+    public void close(){
     }
 }
 
