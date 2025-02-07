@@ -30,11 +30,11 @@ public class FileProcessing {
         //если isAppendMode false то необходимо удалить существующие файлы
         if (!ParsingArgumentsImpl.isAppendMode()) {
             try {
-                Files.deleteIfExists(ParsingArgumentsImpl.getIntFullPathToFile());
-                Files.deleteIfExists(ParsingArgumentsImpl.getFloatFullPathToFile());
                 Files.deleteIfExists(ParsingArgumentsImpl.getStringFullPathToFile());
+                Files.deleteIfExists(ParsingArgumentsImpl.getFloatFullPathToFile());
+                Files.deleteIfExists(ParsingArgumentsImpl.getIntFullPathToFile());
             } catch (IOException e) {
-                System.err.println("Delete files error " + e);
+                System.err.println("Could not to delete files " + e);
             }
             writeToFileIfPathIsEmpty(inputFiles);
         }
@@ -45,40 +45,29 @@ public class FileProcessing {
         return stats;
     }
 
-    private void readFromFiles(List<String> inputFiles) {
-        for (String input : inputFiles) {
-            try {
-                List<String> lines = List.of(String.valueOf(Files.readAllLines(Path.of(input))));
-                System.out.println(lines);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 
     private void writeToFileIfPathIsEmpty(List<String> inputFiles) {
         if (ParsingArgumentsImpl.getOutputPath().isEmpty()) {
-            for (String inputFile : inputFiles) {
-                try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        // Integer
-                        if (line.matches("-?\\d+")) {
-                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
-                            stats.calculatingStats(Integer.parseInt(line));
-                            // Float
-                        } else if (line.matches("-?\\d*\\.\\d+")) {
-                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
-                            stats.calculatingStats(Double.parseDouble(line));
-                            // String
-                        } else {
-                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
-                            stats.calculatingStats(line);
-                        }
+            List<String> lines;
+            try {
+                lines = List.of(String.valueOf(Files.readAllLines(Path.of(String.valueOf(inputFiles)))));
+                for (String line : lines) {
+                    // Integer
+                    if (line.matches("-?\\d+")) {
+                        writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
+                        stats.calculatingStats(Integer.parseInt(line));
+                        // Float
+                    } else if (line.matches("-?\\d*\\.\\d+")) {
+                        writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
+                        stats.calculatingStats(Double.parseDouble(line));
+                        // String
+                    } else {
+                        writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
+                        stats.calculatingStats(line);
                     }
-                } catch (IOException e) {
-                    System.err.println("Error processing file: " + inputFile);
                 }
+            } catch (IOException e) {
+                System.out.println("Error reading file " + e);
             }
         } else {
             try {
@@ -86,7 +75,7 @@ public class FileProcessing {
             } catch (IOException e) {
                 System.err.println("Path already exist " + e);
             }
-
+            //TODO переписать на
             for (String inputFile : inputFiles) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
                      WriteToFile writerManager = new WriteToFile()) {

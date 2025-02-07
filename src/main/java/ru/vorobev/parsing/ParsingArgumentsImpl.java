@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
+//TODO выдача сообщения о том что нет файлов для обработки
 @Getter
 public class ParsingArgumentsImpl implements ParsingArguments {
     private static String intFileName = "integers.txt";

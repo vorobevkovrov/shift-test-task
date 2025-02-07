@@ -9,19 +9,21 @@ public class LineStatistic {
     private int floatCount;
     private int intSum;
     private int intMin = Integer.MAX_VALUE;
-    private int intMax = Integer.MIN_VALUE;
+    private int intMax;
     private int stringCount;
-    private int stringMaxLength = Integer.MIN_VALUE;
+    private int stringMaxLength;
     private int stringMinLength = Integer.MAX_VALUE;
     private double floatSum;
-    private double floatMin = Double.MAX_VALUE;
-    private double floatMax = Double.MIN_VALUE;
+    private double floatMin = Float.MAX_VALUE;
+    private double floatMax;
 
     public void calculatingStats(int value) {
         intCount++;
         intSum += value;
         intMin = Math.min(intMin, value);
         intMax = Math.max(intMax, value);
+        if (intMin == 2147483647)
+            intMin = 0;
     }
 
     public void calculatingStats(double value) {
@@ -29,6 +31,8 @@ public class LineStatistic {
         floatSum += value;
         floatMin = Math.min(floatMin, value);
         floatMax = Math.max(floatMax, value);
+        if (floatMin == Float.MAX_VALUE)
+            floatMin = 0;
     }
 
     public void calculatingStats(String value) {
@@ -54,6 +58,10 @@ public class LineStatistic {
         }
         if (fullStats) {
             System.out.println("Float statistics:");
+            if (intMin == Integer.MAX_VALUE)
+                intMin = 0;
+            if (floatMin == Float.MAX_VALUE)
+                floatMin = 0;
             System.out.println("  Min: " + floatMin);
             System.out.println("  Max: " + floatMax);
             System.out.println("  Sum: " + floatSum);
@@ -64,6 +72,8 @@ public class LineStatistic {
             System.out.println("  Sum: " + intSum);
             System.out.println("  Avg: " + getIntAverage());
             System.out.println("String statistics");
+            if (stringMinLength == Integer.MAX_VALUE)
+                stringMinLength = 0;
             System.out.println("  Min length " + stringMinLength);
             System.out.println("  Max length " + stringMaxLength);
         }
