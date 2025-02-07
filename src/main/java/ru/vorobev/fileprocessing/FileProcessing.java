@@ -11,6 +11,7 @@ import java.util.List;
 
 //TODO Переписать чтение файла на nio библиотеку
 public class FileProcessing {
+    //TODO Рефактор класса
     private final String intFileName;
     private final String floatFileName;
     private final String stringFileName;
@@ -75,7 +76,7 @@ public class FileProcessing {
             } catch (IOException e) {
                 System.err.println("Path already exist " + e);
             }
-            //TODO переписать на
+            //TODO переписать на Files write
             for (String inputFile : inputFiles) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
                      WriteToFile writerManager = new WriteToFile()) {
@@ -83,15 +84,15 @@ public class FileProcessing {
                     while ((line = reader.readLine()) != null) {
                         // Integer
                         if (line.matches("-?\\d+")) {
-                            writerManager.writeToFile(line, ParsingArgumentsImpl.getIntFullPathToFile());
+                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getIntFullPathToFile());
                             stats.calculatingStats(Integer.parseInt(line));
                             // Float
                         } else if (line.matches("-?\\d*\\.\\d+")) {
-                            writerManager.writeToFile(line, ParsingArgumentsImpl.getFloatFullPathToFile());
+                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getFloatFullPathToFile());
                             stats.calculatingStats(Double.parseDouble(line));
                             // String
                         } else {
-                            writerManager.writeToFile(line, ParsingArgumentsImpl.getStringFullPathToFile());
+                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getStringFullPathToFile());
                             stats.calculatingStats(line);
                         }
                     }
