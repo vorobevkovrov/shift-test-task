@@ -2,34 +2,34 @@ package ru.vorobev.parsing;
 
 import lombok.Getter;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
+//TODO выдача сообщения о том что нет файлов для обработки
 @Getter
 public class ParsingArgumentsImpl implements ParsingArguments {
-    private final static String REGEX_PATH_TO_WRITE_FILES = "^/[^/]+(/[^/]+)*/$";
-    private final static String REGEX_READ_FILES = null;
-    private final static String REGEX_ = null;
     private static String intFileName = "integers.txt";
     private static String floatFileName = "floats.txt";
     private static String stringFileName = "strings.txt";
+
+    @Getter
     private static boolean appendMode = false;
     @Getter
     private static boolean briefStats = false;
     @Getter
     private static boolean fullStats = false;
-    private static String outputPath = "";
     @Getter
-    private static String prefix = "";
-    private static final String DEFAULT_PATH = "C:\\Users\\maxim\\IdeaProjectsUltimate\\shift-test-task\\";
+    private static String outputPath;
+    private static String prefix;
+    private static final String DEFAULT_PATH = "C:\\Users\\maxim\\IdeaProjects\\shift-test-task";
     @Getter
-    private static String floatFilePath;
+    private static Path floatFullPathToFile;
     @Getter
-    private static String stringFilePath;
+    private static Path stringFullPathToFile;
     @Getter
-    private static String intFilePath;
-
+    private static Path intFullPathToFile;
+    @Getter
+    private static Path path;
 
 
     static public List<String> programArgs(String[] args) {
@@ -62,10 +62,11 @@ public class ParsingArgumentsImpl implements ParsingArguments {
                             stringFileName = prefix + "strings.txt";
                         }
                         if (!outputPath.isEmpty()) {
-                            intFilePath =  DEFAULT_PATH + outputPath + intFileName;
-                            floatFilePath =  DEFAULT_PATH + outputPath + floatFileName;
-                            stringFilePath =  DEFAULT_PATH + outputPath + stringFileName;
-                           // outputPath = DEFAULT_PATH + outputPath + intFileName;
+                            intFullPathToFile = Path.of(DEFAULT_PATH + outputPath + "\\" + intFileName);
+                            floatFullPathToFile = Path.of(DEFAULT_PATH + outputPath + "\\" + floatFileName);
+                            stringFullPathToFile = Path.of(DEFAULT_PATH + outputPath + "\\" + stringFileName);
+                            path = Path.of(DEFAULT_PATH + outputPath);
+
                         }
                     } else {
                         System.err.println("Error: Missing prefix after -p");
@@ -75,9 +76,7 @@ public class ParsingArgumentsImpl implements ParsingArguments {
                     inputFiles.add(args[i]);
             }
         }
-
         // Apply prefix and output path
-
         return inputFiles;
     }
 
@@ -91,21 +90,5 @@ public class ParsingArgumentsImpl implements ParsingArguments {
 
     public String getStringFileName() {
         return stringFileName;
-    }
-
-    public boolean isAppendMode() {
-        return appendMode;
-    }
-
-    public boolean isFullStat() {
-        return fullStats;
-    }
-
-    public boolean isBriefStat() {
-        return briefStats;
-    }
-
-    public String getOutputPath() {
-        return outputPath;
     }
 }

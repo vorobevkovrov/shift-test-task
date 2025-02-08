@@ -9,8 +9,9 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
 
-
+//TODO Переписать чтение файла на nio библиотеку
 public class FileProcessing {
+    //TODO Рефактор класса
     private final String intFileName;
     private final String floatFileName;
     private final String stringFileName;
@@ -24,70 +25,81 @@ public class FileProcessing {
     }
 
     LineStatistic stats = new LineStatistic();
-    ParsingArgumentsImpl arguments = new ParsingArgumentsImpl();
+    WriteToFile writeToFile = new WriteToFile();
 
     public LineStatistic writeToFiles(List<String> inputFiles) {
-     //   Path pathIntFile = Path.of(ParsingArgumentsImpl.getIntFilePath());
-        Path path = Path.of("C:\\Users\\maxim\\IdeaProjectsUltimate\\shift-test-task\\3.txt");
-        try {
-            Files.createFile(path);
-      //      Files.createFile(pathIntFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        //если isAppendMode false то необходимо удалить существующие файлы
+        if (!ParsingArgumentsImpl.isAppendMode()) {
+            try {
+                Files.deleteIfExists(ParsingArgumentsImpl.getStringFullPathToFile());
+                Files.deleteIfExists(ParsingArgumentsImpl.getFloatFullPathToFile());
+                Files.deleteIfExists(ParsingArgumentsImpl.getIntFullPathToFile());
+            } catch (IOException e) {
+                System.err.println("Could not to delete files " + e);
+            }
+            writeToFileIfPathIsEmpty(inputFiles);
         }
-        if (arguments.getOutputPath().isEmpty()) {
-            for (String inputFile : inputFiles) {
-                try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-                     WriteToFile writerManager = new WriteToFile(intFileName, floatFileName, stringFileName, appendMode)) {
-                    String line;
-
-                    while ((line = reader.readLine()) != null) {
-                        if (line.matches("-?\\d+")) {// Integer
-                            writerManager.writeInteger(line);
-                            Files.write(path, (line + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                            stats.incrementIntCount(Integer.parseInt(line));
-                        } else if (line.matches("-?\\d*\\.\\d+")) { // Float
-                            writerManager.writeFloat(line);
-                            Files.write(path, (line + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                            stats.incrementFloatCount(Double.parseDouble(line));
-                        } else { // String
-                            writerManager.writeString(line);
-                            Files.write(path, (line + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                            stats.incrementStringCount(line);
-                        }
-                    }
-                } catch (IOException e) {
-                    System.err.println("Error processing file: " + inputFile);
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            for (String inputFile : inputFiles) {
-                try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-                     WriteToFile writerManager = new WriteToFile(intFileName, floatFileName, stringFileName, appendMode)) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        if (line.matches("-?\\d+")) {// Integer
-                            //    writerManager.writeToFileWithPath(line);
-                            writerManager.writeInteger(line);
-                            stats.incrementIntCount(Integer.parseInt(line));
-                        } else if (line.matches("-?\\d*\\.\\d+")) { // Float
-                            //    writerManager.writeToFileWithPath(line);
-                            writerManager.writeFloat(line);
-                            stats.incrementFloatCount(Double.parseDouble(line));
-                        } else { // String
-                            writerManager.writeToFileWithPath(line, path);
-                            writerManager.writeString(line);
-                            stats.incrementStringCount(line);
-                        }
-                    }
-                } catch (IOException e) {
-                    System.err.println("Error processing file: " + inputFile);
-                    e.printStackTrace();
-                }
-            }
+        //если isAppendMode true то пишем в существующие файлы
+        if (ParsingArgumentsImpl.isAppendMode()) {
+            writeToFileIfPathIsEmpty(inputFiles);
         }
         return stats;
     }
-}
 
+
+    private void writeToFileIfPathIsEmpty(List<String> inputFiles) {
+        if (ParsingArgumentsImpl.getOutputPath().isEmpty()) {
+            List<String> lines;
+            try {
+                lines = List.of(String.valueOf(Files.readAllLines(Path.of(String.valueOf(inputFiles)))));
+                for (String line : lines) {
+                    // Integer
+                    if (line.matches("-?\\d+")) {
+                        writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
+                        stats.calculatingStats(Integer.parseInt(line));
+                        // Float
+                    } else if (line.matches("-?\\d*\\.\\d+")) {
+                        writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
+                        stats.calculatingStats(Double.parseDouble(line));
+                        // String
+                    } else {
+                        writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
+                        stats.calculatingStats(line);
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("Error reading file " + e);
+            }
+        } else {
+            try {
+                Files.createDirectories(ParsingArgumentsImpl.getPath());
+            } catch (IOException e) {
+                System.err.println("Path already exist " + e);
+            }
+            //TODO переписать на Files write
+            for (String inputFile : inputFiles) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+                     WriteToFile writerManager = new WriteToFile()) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        // Integer
+                        if (line.matches("-?\\d+")) {
+                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getIntFullPathToFile());
+                            stats.calculatingStats(Integer.parseInt(line));
+                            // Float
+                        } else if (line.matches("-?\\d*\\.\\d+")) {
+                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getFloatFullPathToFile());
+                            stats.calculatingStats(Double.parseDouble(line));
+                            // String
+                        } else {
+                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getStringFullPathToFile());
+                            stats.calculatingStats(line);
+                        }
+                    }
+                } catch (IOException e) {
+                    System.err.println("Error processing file: " + inputFile + " " + e);
+                }
+            }
+        }
+    }
+}
