@@ -28,7 +28,7 @@ public class FileProcessing {
     WriteToFile writeToFile = new WriteToFile();
 
     public LineStatistic writeToFiles(List<String> inputFiles) {
-        //если isAppendMode false то необходимо удалить существующие файлы
+        //если isAppendMode (-a) false то необходимо удалить существующие файлы
         if (!ParsingArgumentsImpl.isAppendMode()) {
             try {
                 Files.deleteIfExists(ParsingArgumentsImpl.getStringFullPathToFile());
@@ -39,7 +39,7 @@ public class FileProcessing {
             }
             writeToFileIfPathIsEmpty(inputFiles);
         }
-        //если isAppendMode true то пишем в существующие файлы
+        //если isAppendMode (-a) true то пишем в существующие файлы
         if (ParsingArgumentsImpl.isAppendMode()) {
             writeToFileIfPathIsEmpty(inputFiles);
         }

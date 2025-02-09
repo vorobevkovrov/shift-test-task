@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
 //TODO выдача сообщения о том что нет файлов для обработки
 @Getter
 public class ParsingArgumentsImpl implements ParsingArguments {
@@ -21,7 +22,7 @@ public class ParsingArgumentsImpl implements ParsingArguments {
     @Getter
     private static String outputPath;
     private static String prefix;
-    private static final String DEFAULT_PATH = "C:\\Users\\maxim\\IdeaProjects\\shift-test-task";
+    // private static final String DEFAULT_PATH = "C:\\Users\\maxim\\IdeaProjects\\shift-test-task";
     @Getter
     private static Path floatFullPathToFile;
     @Getter
@@ -61,13 +62,19 @@ public class ParsingArgumentsImpl implements ParsingArguments {
                             floatFileName = prefix + "floats.txt";
                             stringFileName = prefix + "strings.txt";
                         }
+                        if (outputPath==null){
+                            outputPath="";
+                            System.err.println("Error: Missing path after -p");
+                        }
+
                         if (!outputPath.isEmpty()) {
-                            intFullPathToFile = Path.of(DEFAULT_PATH + outputPath + "\\" + intFileName);
-                            floatFullPathToFile = Path.of(DEFAULT_PATH + outputPath + "\\" + floatFileName);
-                            stringFullPathToFile = Path.of(DEFAULT_PATH + outputPath + "\\" + stringFileName);
-                            path = Path.of(DEFAULT_PATH + outputPath);
+                            intFullPathToFile = Path.of(outputPath + "\\" + intFileName);
+                            floatFullPathToFile = Path.of(outputPath + "\\" + floatFileName);
+                            stringFullPathToFile = Path.of(outputPath + "\\" + stringFileName);
+                            path = Path.of(outputPath);
 
                         }
+
                     } else {
                         System.err.println("Error: Missing prefix after -p");
                     }
