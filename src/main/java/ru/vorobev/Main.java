@@ -8,11 +8,8 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        ParsingArgumentsImpl parsingArguments = new ParsingArgumentsImpl();
         List<String> progArg = ParsingArgumentsImpl.programArgs(args);
-        FileProcessing processor = new FileProcessing(parsingArguments.getIntFileName(),
-                parsingArguments.getFloatFileName(), parsingArguments.getStringFileName(),
-                parsingArguments.isAppendMode());
+        FileProcessing processor = new FileProcessing();
         LineStatistic stats = processor.writeToFiles(progArg);
         stats.printStatistic(ParsingArgumentsImpl.isBriefStats(), ParsingArgumentsImpl.isFullStats());
     }
