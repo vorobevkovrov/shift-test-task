@@ -1,12 +1,12 @@
 # В проекте используется:
 
-Java 21
-Система сборки Maven
-Библиотеки:
-Lombok 1.18.36
-https://mvnrepository.com/artifact/org.projectlombok/lombok/1.18.36
-Maven jar plugin 3.4.2
-https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin/3.4.2
+Java 21     
+Система сборки Maven   
+Библиотеки:   
+Lombok 1.18.36     
+https://mvnrepository.com/artifact/org.projectlombok/lombok/1.18.36     
+Maven jar plugin 3.4.2      
+https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin/3.4.2     
 
 # Инструкция по запуску проекта
 
