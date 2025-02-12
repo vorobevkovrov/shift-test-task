@@ -10,10 +10,11 @@ import java.nio.file.StandardOpenOption;
 @NoArgsConstructor
 public class WriteToFile implements AutoCloseable {
 
-    /** Method for write values to file
+    /**
+     * Method for write values to file
      *
      * @param value necessary to write to file
-     * @param path to write to file
+     * @param path  to write to file
      */
 
     public void writeToFile(String value, Path path) {
@@ -23,8 +24,9 @@ public class WriteToFile implements AutoCloseable {
             System.err.println("Failed to write to the file " + e);
         }
     }
+
     @Override
-    public void close(){
+    public void close() {
     }
 }
 
