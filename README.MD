@@ -12,7 +12,7 @@ https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin/3.4
 
 Для запуска из директории проекта выполните команду mvn package
 
-Затем выполните java -jar target\shift-test-task-1.0.jar -a -f -o \some\path -p sample- 1.txt 2.txt      
+Затем выполните java -jar target\shift-test-task-1.0.jar -a -f -o C:\some\path -p sample- 1.txt 2.txt      
 Где аргументами для запуска являются следующие параметры перечисленные через пробел:         
 -a добавления в существующие файлы      
 -s краткая статистика содержит только количество элементов записанных в исходящие файлы       
@@ -21,4 +21,4 @@ https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin/3.4
 -p задает префикс имен выходных файлов      
 1.txt 2.txt файлы для обработки      
 Пример команды для запуска      
-java -jar target\shift-test-task-1.0.jar -f -o \some\path -p sample- 1.txt 2.txt       
+java -jar target\shift-test-task-1.0.jar -f -o C:\some\path -p sample- 1.txt 2.txt       
