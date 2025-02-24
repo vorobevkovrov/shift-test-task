@@ -1,15 +1,17 @@
 package ru.vorobev.parsing;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-/**Class for parsing input parameters
- *
+/**
+ * Class for parsing input parameters
  */
+@Slf4j
 @Getter
 public class ParsingArgumentsImpl implements ParsingArguments {
     /**
@@ -68,8 +70,9 @@ public class ParsingArgumentsImpl implements ParsingArguments {
     private static Path path;
 
     /**
-     *Returns list arguments incoming from command line and set append mode, statistics
+     * Returns list arguments incoming from command line and set append mode, statistics
      * and path to write files and name files
+     *
      * @param args array of arguments
      * @return list of files to process
      */
@@ -91,7 +94,7 @@ public class ParsingArgumentsImpl implements ParsingArguments {
                     if (i + 1 < args.length) {
                         outputPath = args[++i];
                     } else {
-                        System.err.println("Error: Missing path after -o");
+                        log.error("Error: Missing path after -o");
                         break;
                     }
                     break;
@@ -103,7 +106,7 @@ public class ParsingArgumentsImpl implements ParsingArguments {
                             floatFileName = prefix + "floats.txt";
                             stringFileName = prefix + "strings.txt";
                         }
-                        if (outputPath==null){
+                        if (outputPath == null) {
                             Path currentRelativePath = Paths.get("");
                             outputPath = currentRelativePath.toAbsolutePath().toString();
                         }
@@ -117,7 +120,7 @@ public class ParsingArgumentsImpl implements ParsingArguments {
                         }
 
                     } else {
-                        System.err.println("Error: Missing prefix after -p");
+                        log.error("Error: Missing prefix after -p");
                     }
                     break;
                 default:

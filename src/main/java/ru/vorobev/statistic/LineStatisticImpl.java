@@ -9,7 +9,7 @@ import lombok.Getter;
  */
 
 @Getter
-public class LineStatisticImpl  implements LineStatistic{
+public class LineStatisticImpl implements LineStatistic {
     /**
      * Field count integers
      */
@@ -117,12 +117,22 @@ public class LineStatisticImpl  implements LineStatistic{
      */
 
     public void printStatistic(boolean briefStats, boolean fullStats) {
+        String brief = """
+                Statistics:
+                Integers: %s
+                Floats: %s
+                Strings: %s
+                """.formatted(intCount, floatCount, stringCount);
         if (briefStats) {
-            System.out.println("Statistics:");
-            System.out.println("Integers: " + intCount);
-            System.out.println("Floats: " + floatCount);
-            System.out.println("Strings: " + stringCount);
+            System.out.println(brief);
+//            System.out.println("Statistics:");
+//            System.out.println("Integers: " + intCount);
+//            System.out.println("Floats: " + floatCount);
+//            System.out.println("Strings: " + stringCount);
         }
+        //TODO ну тут можно использовать """ """ (у тебя же 21 Java впроде ?) чтобы не делать 100500 вызовов
+        // System.Out.Println.
+        // Сформируй строку и один раз ее выведи. Можешь System.out.printf посмотреть для вывода форматированного текста
         if (fullStats) {
             System.out.println("Float statistics:");
             if (intMin == Integer.MAX_VALUE)

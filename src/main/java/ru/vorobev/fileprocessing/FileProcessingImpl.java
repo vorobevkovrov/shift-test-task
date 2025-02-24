@@ -1,5 +1,6 @@
 package ru.vorobev.fileprocessing;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.vorobev.parsing.ParsingArgumentsImpl;
 import ru.vorobev.statistic.LineStatisticImpl;
 
@@ -12,6 +13,7 @@ import java.util.List;
  *
  * @author maxim
  */
+@Slf4j
 public class FileProcessingImpl implements FileProcessing {
     LineStatisticImpl stats = new LineStatisticImpl();
     WriteToFile writeToFile = new WriteToFile();
@@ -19,13 +21,14 @@ public class FileProcessingImpl implements FileProcessing {
     /**
      * Checks for files and distributes writing to files depending on the -a flag
      *
-     * @param list of inputFiles
+     * @param List of inputFiles
      * @return statistics on recorded lines
      */
     public LineStatisticImpl writeToFiles(List<String> inputFiles) {
         if (inputFiles.isEmpty()) {
             throw new RuntimeException("There are no files to process, please add files in working directory");
         }
+        //TODO тоже так себе выглядит, три одинаковых строчки по сути. тоже стратегию можно впихнуть
         //if isAppendMode (-a) false
         if (!ParsingArgumentsImpl.isAppendMode()) {
             try {
@@ -33,7 +36,8 @@ public class FileProcessingImpl implements FileProcessing {
                 Files.deleteIfExists(ParsingArgumentsImpl.getFloatFullPathToFile());
                 Files.deleteIfExists(ParsingArgumentsImpl.getIntFullPathToFile());
             } catch (IOException e) {
-                System.err.println("Could not to delete files " + e);
+                log.error("Could not to delete files {} ", e);
+
             }
             writeToFile(inputFiles);
         }
@@ -52,6 +56,7 @@ public class FileProcessingImpl implements FileProcessing {
      */
     public void writeToFile(List<String> inputFiles) {
         Path path = Paths.get("");
+        //TODO ну тут чтоб по красоте было надо на новые строчки вынести вызовы
         List<String> lines;
         if (ParsingArgumentsImpl.getOutputPath().isEmpty()) {
             for (String inputFile : inputFiles) {
@@ -59,6 +64,11 @@ public class FileProcessingImpl implements FileProcessing {
                     lines = Files.readAllLines(Path.of((path.toAbsolutePath() + FileSystems.getDefault()
                             .getSeparator() + inputFile)));
                     for (String line : lines) {
+                        //TODO тут у тебя одно и тоже почти во всех ветках происхродит, тут как раз можно не проверять
+                        // какой тип линии тебе пришел, сразу писать в файл и передавать линию в калькулейтСТатс,
+                        // а там уже определять че пришло и вот там уже работать с конкретным типом линии
+                        // (инт, флоат, строка), и вот там уже хорошо и стратегия и все такое.
+
                         // Integer
                         if (line.matches("-?\\d+")) {
                             writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
@@ -74,14 +84,18 @@ public class FileProcessingImpl implements FileProcessing {
                         }
                     }
                 } catch (IOException e) {
-                    System.err.println("Error reading file " + e);
+                    log.error("Error reading file{}", e);
                 }
             }
+            //TODO ну тут как будто у тебя дублирование кода с 59 и 80 строк. Как минимум вынести в отдельный приват метод.
+            // Второе, if...else if...else if это прям оч плохо. Завтра у тебя добавиться еще какой-нибудь тип и
+            // будешь опять переписывать. Подумай как тут паттерн Стратегия можно применить
+            // (будет намного интереснее смотреться)
         } else {
             try {
                 Files.createDirectories(ParsingArgumentsImpl.getPath());
             } catch (IOException e) {
-                System.err.println("Path already exist " + e);
+                log.error("Path already exist {}", e);
             }
             for (String inputFile : inputFiles) {
                 try {
@@ -103,7 +117,7 @@ public class FileProcessingImpl implements FileProcessing {
                         }
                     }
                 } catch (IOException e) {
-                    System.err.println("Error reading incoming file: " + inputFile + " " + e);
+                    log.error("Error reading incoming file: {}", inputFile);
                 }
             }
         }
