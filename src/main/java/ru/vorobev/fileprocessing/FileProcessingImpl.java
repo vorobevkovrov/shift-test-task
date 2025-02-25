@@ -17,6 +17,7 @@ import java.util.List;
 public class FileProcessingImpl implements FileProcessing {
     LineStatisticImpl stats = new LineStatisticImpl();
     WriteToFile writeToFile = new WriteToFile();
+    ReadLinesFromFiles readLines = new ReadLinesFromFilesImpl();
 
     /**
      * Checks for files and distributes writing to files depending on the -a flag
@@ -36,8 +37,7 @@ public class FileProcessingImpl implements FileProcessing {
                 Files.deleteIfExists(ParsingArgumentsImpl.getFloatFullPathToFile());
                 Files.deleteIfExists(ParsingArgumentsImpl.getIntFullPathToFile());
             } catch (IOException e) {
-                log.error("Could not to delete files {} ", e);
-
+                log.error("Could not to delete files: {}", e);
             }
             writeToFile(inputFiles);
         }
@@ -56,35 +56,25 @@ public class FileProcessingImpl implements FileProcessing {
      */
     public void writeToFile(List<String> inputFiles) {
         Path path = Paths.get("");
+        List<String> lines = readLines.readLinesFromFiles(Path.of((path.toAbsolutePath() + FileSystems.getDefault()
+                .getSeparator())), inputFiles);
         //TODO ну тут чтоб по красоте было надо на новые строчки вынести вызовы
-        List<String> lines;
         if (ParsingArgumentsImpl.getOutputPath().isEmpty()) {
-            for (String inputFile : inputFiles) {
-                try {
-                    lines = Files.readAllLines(Path.of((path.toAbsolutePath() + FileSystems.getDefault()
-                            .getSeparator() + inputFile)));
-                    for (String line : lines) {
-                        //TODO тут у тебя одно и тоже почти во всех ветках происхродит, тут как раз можно не проверять
-                        // какой тип линии тебе пришел, сразу писать в файл и передавать линию в калькулейтСТатс,
-                        // а там уже определять че пришло и вот там уже работать с конкретным типом линии
-                        // (инт, флоат, строка), и вот там уже хорошо и стратегия и все такое.
+            for (String line : lines) {
+                //TODO тут у тебя одно и тоже почти во всех ветках происходит, тут как раз можно не проверять
+                // какой тип линии тебе пришел, сразу писать в файл и передавать линию в калькулейтСТатс,
+                // а там уже определять че пришло и вот там уже работать с конкретным типом линии
+                // (инт, флоат, строка), и вот там уже хорошо и стратегия и все такое.
 
-                        // Integer
-                        if (line.matches("-?\\d+")) {
-                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
-                            stats.calculatingStats(Integer.parseInt(line));
-                            // Float
-                        } else if (line.matches("-?\\d*\\.\\d+")) {
-                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
-                            stats.calculatingStats(Double.parseDouble(line));
-                            // String
-                        } else {
-                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
-                            stats.calculatingStats(line);
-                        }
-                    }
-                } catch (IOException e) {
-                    log.error("Error reading file{}", e);
+                // Integer
+                if (line.matches("-?\\d+")) {
+                    writeToFile(line);
+                    // Float
+                } else if (line.matches("-?\\d*\\.\\d+")) {
+                    // String
+                    writeToFile(line);
+                } else {
+                    writeToFile(line);
                 }
             }
             //TODO ну тут как будто у тебя дублирование кода с 59 и 80 строк. Как минимум вынести в отдельный приват метод.
@@ -95,31 +85,28 @@ public class FileProcessingImpl implements FileProcessing {
             try {
                 Files.createDirectories(ParsingArgumentsImpl.getPath());
             } catch (IOException e) {
-                log.error("Path already exist {}", e);
+                log.error("Path already exist: {}", e);
             }
-            for (String inputFile : inputFiles) {
-                try {
-                    lines = Files.readAllLines(Path.of((path.toAbsolutePath() + FileSystems.getDefault()
-                            .getSeparator() + inputFile)));
-                    for (String line : lines) {
-                        // Integer
-                        if (line.matches("-?\\d+")) {
-                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getIntFullPathToFile());
-                            stats.calculatingStats(Integer.parseInt(line));
-                            // Float
-                        } else if (line.matches("-?\\d*\\.\\d+")) {
-                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getFloatFullPathToFile());
-                            stats.calculatingStats(Double.parseDouble(line));
-                            // String
-                        } else {
-                            writeToFile.writeToFile(line, ParsingArgumentsImpl.getStringFullPathToFile());
-                            stats.calculatingStats(line);
-                        }
-                    }
-                } catch (IOException e) {
-                    log.error("Error reading incoming file: {}", inputFile);
+            for (String line : lines) {
+                // Integer
+                if (line.matches("-?\\d+")) {
+                    writeToFile.writeToFile(line, ParsingArgumentsImpl.getIntFullPathToFile());
+                    stats.calculatingStats(Integer.parseInt(line));
+                    // Float
+                } else if (line.matches("-?\\d*\\.\\d+")) {
+                    writeToFile.writeToFile(line, ParsingArgumentsImpl.getFloatFullPathToFile());
+                    stats.calculatingStats(Double.parseDouble(line));
+                    // String
+                } else {
+                    writeToFile.writeToFile(line, ParsingArgumentsImpl.getStringFullPathToFile());
+                    stats.calculatingStats(line);
                 }
             }
         }
+    }
+
+    private void writeToFile(String line) {
+        writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
+        stats.calculatingStats(Integer.parseInt(line));
     }
 }

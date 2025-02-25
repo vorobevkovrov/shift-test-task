@@ -125,35 +125,35 @@ public class LineStatisticImpl implements LineStatistic {
                 """.formatted(intCount, floatCount, stringCount);
         if (briefStats) {
             System.out.println(brief);
-//            System.out.println("Statistics:");
-//            System.out.println("Integers: " + intCount);
-//            System.out.println("Floats: " + floatCount);
-//            System.out.println("Strings: " + stringCount);
         }
-        //TODO ну тут можно использовать """ """ (у тебя же 21 Java впроде ?) чтобы не делать 100500 вызовов
-        // System.Out.Println.
-        // Сформируй строку и один раз ее выведи. Можешь System.out.printf посмотреть для вывода форматированного текста
         if (fullStats) {
-            System.out.println("Float statistics:");
-            if (intMin == Integer.MAX_VALUE)
+            if (intMin == Integer.MAX_VALUE) {
                 intMin = 0;
-            if (floatMin == Float.MAX_VALUE)
+            }
+            if (floatMin == Float.MAX_VALUE) {
                 floatMin = 0;
-            System.out.println("  Min: " + floatMin);
-            System.out.println("  Max: " + floatMax);
-            System.out.println("  Sum: " + floatSum);
-            System.out.println("  Avg: " + getFloatAverage());
-            System.out.println("Integer statistics:");
-            System.out.println("  Min: " + intMin);
-            System.out.println("  Max: " + intMax);
-            System.out.println("  Sum: " + intSum);
-            System.out.println("  Avg: " + getIntAverage());
-            System.out.println("String statistics");
+            }
             if (stringMinLength == Integer.MAX_VALUE)
                 stringMinLength = 0;
-            System.out.println(" Count strings " + stringCount);
-            System.out.println("  Min length " + stringMinLength);
-            System.out.println("  Max length " + stringMaxLength);
+            String full = """
+                    Full statistics:
+                    Float statistics: 
+                    Min: %s
+                    Max: %s
+                    Sum: %s
+                    Avg %s
+                    Integer statistics:
+                    Min: %s
+                    Max: %s
+                    Sum: %s
+                    Avg %s
+                    String statistics:
+                    Count strings %s
+                    Min length %s
+                    Max length %s
+                    """.formatted(floatMin, floatMax, floatSum, getFloatAverage(), intMin, intMax, intSum,
+                    getIntAverage(), stringCount, stringMinLength, stringMaxLength);
+            System.out.println(full);
         }
     }
 }
