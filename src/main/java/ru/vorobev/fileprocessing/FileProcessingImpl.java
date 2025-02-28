@@ -1,6 +1,12 @@
 package ru.vorobev.fileprocessing;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.vorobev.filewriterstrategy.FileWriterContext;
+import ru.vorobev.filewriterstrategy.FloatProcessingStrategy;
+import ru.vorobev.filewriterstrategy.IntegerProcessingStrategy;
+import ru.vorobev.filewriterstrategy.StringProcessingStrategy;
 import ru.vorobev.parsing.ParsingArgumentsImpl;
 import ru.vorobev.statistic.LineStatisticImpl;
 
@@ -15,9 +21,11 @@ import java.util.List;
  */
 @Slf4j
 public class FileProcessingImpl implements FileProcessing {
-    LineStatisticImpl stats = new LineStatisticImpl();
     WriteToFile writeToFile = new WriteToFile();
+    LineStatisticImpl stats = new LineStatisticImpl();
     ReadLinesFromFiles readLines = new ReadLinesFromFilesImpl();
+    FileWriterContext fileWriterContext = new FileWriterContext();
+
 
     /**
      * Checks for files and distributes writing to files depending on the -a flag
@@ -59,54 +67,42 @@ public class FileProcessingImpl implements FileProcessing {
         List<String> lines = readLines.readLinesFromFiles(Path.of((path.toAbsolutePath() + FileSystems.getDefault()
                 .getSeparator())), inputFiles);
         //TODO ну тут чтоб по красоте было надо на новые строчки вынести вызовы
-        if (ParsingArgumentsImpl.getOutputPath().isEmpty()) {
-            for (String line : lines) {
-                //TODO тут у тебя одно и тоже почти во всех ветках происходит, тут как раз можно не проверять
-                // какой тип линии тебе пришел, сразу писать в файл и передавать линию в калькулейтСТатс,
-                // а там уже определять че пришло и вот там уже работать с конкретным типом линии
-                // (инт, флоат, строка), и вот там уже хорошо и стратегия и все такое.
+        //TODO тут у тебя одно и тоже почти во всех ветках происходит, тут как раз можно не проверять
+        // какой тип линии тебе пришел, сразу писать в файл и передавать линию в калькулейтСТатс,
+        // а там уже определять че пришло и вот там уже работать с конкретным типом линии
+        // (инт, флоат, строка), и вот там уже хорошо и стратегия и все такое.
 
-                // Integer
-                if (line.matches("-?\\d+")) {
-                    writeToFile(line);
-                    // Float
-                } else if (line.matches("-?\\d*\\.\\d+")) {
-                    // String
-                    writeToFile(line);
-                } else {
-                    writeToFile(line);
-                }
-            }
-            //TODO ну тут как будто у тебя дублирование кода с 59 и 80 строк. Как минимум вынести в отдельный приват метод.
-            // Второе, if...else if...else if это прям оч плохо. Завтра у тебя добавиться еще какой-нибудь тип и
-            // будешь опять переписывать. Подумай как тут паттерн Стратегия можно применить
-            // (будет намного интереснее смотреться)
-        } else {
-            try {
-                Files.createDirectories(ParsingArgumentsImpl.getPath());
-            } catch (IOException e) {
-                log.error("Path already exist: {}", e);
-            }
-            for (String line : lines) {
-                // Integer
-                if (line.matches("-?\\d+")) {
-                    writeToFile.writeToFile(line, ParsingArgumentsImpl.getIntFullPathToFile());
-                    stats.calculatingStats(Integer.parseInt(line));
-                    // Float
-                } else if (line.matches("-?\\d*\\.\\d+")) {
-                    writeToFile.writeToFile(line, ParsingArgumentsImpl.getFloatFullPathToFile());
-                    stats.calculatingStats(Double.parseDouble(line));
-                    // String
-                } else {
-                    writeToFile.writeToFile(line, ParsingArgumentsImpl.getStringFullPathToFile());
-                    stats.calculatingStats(line);
-                }
-            }
+        //TODO ну тут как будто у тебя дублирование кода с 59 и 80 строк. Как минимум вынести в отдельный приват метод.
+        // Второе, if...else if...else if это прям оч плохо. Завтра у тебя добавиться еще какой-нибудь тип и
+        // будешь опять переписывать. Подумай как тут паттерн Стратегия можно применить
+        // (будет намного интереснее смотреться)
+
+        try {
+            Files.createDirectories(ParsingArgumentsImpl.getPath());
+        } catch (IOException e) {
+            log.error("Path already exist: {}", e);
+        }
+        for (String line : lines) {
+            fileWriterContext.setFileWriterStrategy(new IntegerProcessingStrategy());
+            fileWriterContext.write(line);
+            fileWriterContext.setFileWriterStrategy(new FloatProcessingStrategy());
+            fileWriterContext.write(line);
+            fileWriterContext.setFileWriterStrategy(new StringProcessingStrategy());
+            fileWriterContext.write(line);
+            // Integer
+//            if (line.matches("-?\\d+")) {
+//                writeToFile.writeToFile(line, ParsingArgumentsImpl.getIntFullPathToFile());
+//                stats.calculatingStats(Integer.parseInt(line));
+//                // Float
+//            } else if (line.matches("-?\\d*\\.\\d+")) {
+//                writeToFile.writeToFile(line, ParsingArgumentsImpl.getFloatFullPathToFile());
+//                stats.calculatingStats(Double.parseDouble(line));
+//                // String
+//            } else {
+//                writeToFile.writeToFile(line, ParsingArgumentsImpl.getStringFullPathToFile());
+//                stats.calculatingStats(line);
+//            }
         }
     }
-
-    private void writeToFile(String line) {
-        writeToFile.writeToFile(line, ParsingArgumentsImpl.getPath());
-        stats.calculatingStats(Integer.parseInt(line));
-    }
 }
+

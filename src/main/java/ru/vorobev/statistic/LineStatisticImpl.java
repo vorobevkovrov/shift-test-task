@@ -13,54 +13,54 @@ public class LineStatisticImpl implements LineStatistic {
     /**
      * Field count integers
      */
-    private int intCount;
+    private static int intCount;
     /**
      * Field count real numbers
      */
-    private int floatCount;
+    private static int floatCount;
     /**
      * Field sum of all integers
      */
-    private int intSum;
+    private static int intSum;
     /**
      * Field minimum value integers
      */
-    private int intMin = Integer.MAX_VALUE;
+    private static int intMin = Integer.MAX_VALUE;
     /**
      * Field maximum value integers
      */
-    private int intMax;
+    private static int intMax;
     /**
      * Field count strings
      */
-    private int stringCount;
+    private static int stringCount;
     /**
      * Field maximum string length
      */
-    private int stringMaxLength;
+    private static int stringMaxLength;
     /**
      * Field minimum string length
      */
-    private int stringMinLength = Integer.MAX_VALUE;
+    private static int stringMinLength = Integer.MAX_VALUE;
     /**
      * Field sum of all real numbers
      */
-    private double floatSum;
+    private static double floatSum;
     /**
      * Field minimum real numbers
      */
-    private double floatMin = Float.MAX_VALUE;
+    private static double floatMin = Float.MAX_VALUE;
     /**
      * Field maximum real numbers
      */
-    private double floatMax;
+    private static double floatMax;
 
     /**
      * Calculates the quantity, sum, minimum and maximum of integers obtained from a file
      *
      * @param value line from file
      */
-    public void calculatingStats(int value) {
+    public static void calculatingStats(int value) {
         intCount++;
         intSum += value;
         intMin = Math.min(intMin, value);
@@ -72,7 +72,7 @@ public class LineStatisticImpl implements LineStatistic {
      *
      * @param value line from file
      */
-    public void calculatingStats(double value) {
+    public static void calculatingStats(double value) {
         floatCount++;
         floatSum += value;
         floatMin = Math.min(floatMin, value);
@@ -84,7 +84,7 @@ public class LineStatisticImpl implements LineStatistic {
      *
      * @param value line from file
      */
-    public void calculatingStats(String value) {
+    public static void calculatingStats(String value) {
         stringCount++;
         stringMinLength = Math.min(value.length(), stringMinLength);
         stringMaxLength = Math.max(stringMaxLength, value.length());
@@ -138,10 +138,10 @@ public class LineStatisticImpl implements LineStatistic {
             String full = """
                     Full statistics:
                     Float statistics: 
-                    Min: %s
-                    Max: %s
-                    Sum: %s
-                    Avg %s
+                    Min: %.2f
+                    Max: %.2f
+                    Sum: %.2f
+                    Avg %.2f
                     Integer statistics:
                     Min: %s
                     Max: %s

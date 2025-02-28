@@ -1,11 +1,14 @@
 package ru.vorobev.statistic;
 
 public interface LineStatistic {
-    void calculatingStats(int value);
+    static void calculatingStats(int value) {
+    }
 
-    void calculatingStats(double value);
+    static void calculatingStats(double value) {
+    }
 
-    void calculatingStats(String value);
+    static void calculatingStats(String value) {
+    }
 
     double getIntAverage();
 

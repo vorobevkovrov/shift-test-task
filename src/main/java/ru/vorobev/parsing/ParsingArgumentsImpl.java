@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class for parsing input parameters
+ * Class for parsing input parameters from command line arguments
  */
 @Slf4j
 @Getter
@@ -116,7 +116,6 @@ public class ParsingArgumentsImpl implements ParsingArguments {
                             floatFullPathToFile = Path.of(outputPath + "\\" + floatFileName);
                             stringFullPathToFile = Path.of(outputPath + "\\" + stringFileName);
                             path = Path.of(outputPath);
-
                         }
 
                     } else {
